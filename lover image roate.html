@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Rotating Image Cylinder</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #004680;
+            overflow: hidden;
+            perspective: 800px;
+            transition: background-color 1s ease;
+        }
+        .carousel {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            transform-style: preserve-3d;
+            animation: rotate 10s infinite linear;
+        }
+        .carousel div {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            left: 50%;
+            transform-origin: center;
+            transform-style: preserve-3d;
+        }
+        .carousel img {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
+        }
+        .carousel span {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            border-radius: 5px;
+        }
+        @keyframes rotate {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        .carousel div:nth-child(1) { transform: rotateY(0deg) translateZ(220px); }
+        .carousel div:nth-child(2) { transform: rotateY(45deg) translateZ(220px); }
+        .carousel div:nth-child(3) { transform: rotateY(90deg) translateZ(220px); }
+        .carousel div:nth-child(4) { transform: rotateY(135deg) translateZ(220px); }
+        .carousel div:nth-child(5) { transform: rotateY(180deg) translateZ(220px); }
+        .carousel div:nth-child(6) { transform: rotateY(225deg) translateZ(220px); }
+        .carousel div:nth-child(7) { transform: rotateY(270deg) translateZ(220px); }
+        .carousel div:nth-child(8) { transform: rotateY(315deg) translateZ(220px); }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <div><img src="/https://www.instagram.com/?utm_source=pwa_homescreen&__pwa=1" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+        <div><img src="/mom.jpg" alt="My Lover"><span>My Lover</span></div>
+    </div>
+    <script>
+        function getDominantColor(imageSrc, callback) {
+            let img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = imageSrc;
+            img.onload = function() {
+                let canvas = document.createElement("canvas");
+                let ctx = canvas.getContext("2d");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                let imageData = ctx.getImageData(0, 0, img.width, img.height).data;
+                let r = 0, g = 0, b = 0, count = 0;
+                for (let i = 0; i < imageData.length; i += 4 * 100) { // Sample every 100 pixels
+                    r += imageData[i];
+                    g += imageData[i + 1];
+                    b += imageData[i + 2];
+                    count++;
+                }
+                r = Math.floor(r / count);
+                g = Math.floor(g / count);
+                b = Math.floor(b / count);
+                callback(`rgb(${r}, ${g}, ${b})`);
+            };
+        }
+        
+        let images = document.querySelectorAll(".carousel img");
+        let currentIndex = 0;
+        function updateBackgroundColor() {
+            getDominantColor(images[currentIndex].src, function(color) {
+                document.body.style.backgroundColor = color;
+            });
+            currentIndex = (currentIndex + 1) % images.length;
+        }
+        
+        setInterval(updateBackgroundColor, 3000);
+    </script>
+</body>
+</html>
